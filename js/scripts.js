@@ -63,24 +63,64 @@ const moveSnake = () => {
   if (!direction) return;
   const head = snake[snake.length - 1];
 
-  if (direction == "right") {
+  if (direction === "right") {
     snake.push({ x: head.x + size, y: head.y });
   }
 
-  if (direction == "left") {
+  if (direction === "left") {
     snake.push({ x: head.x - size, y: head.y });
   }
 
-  if (direction == "down") {
+  if (direction === "down") {
     snake.push({ x: head.x, y: head.y + size });
   }
 
-  if (direction == "up") {
+  if (direction === "up") {
     snake.push({ x: head.x, y: head.y - size });
   }
 
   snake.shift();
 };
+
+// Adicionando suporte para dispositivos móveis
+document.addEventListener("touchstart", handleTouchStart, false);
+document.addEventListener("touchmove", handleTouchMove, false);
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+function handleTouchStart(event) {
+  touchStartX = event.touches[0].clientX;
+  touchStartY = event.touches[0].clientY;
+}
+
+function handleTouchMove(event) {
+  if (!touchStartX || !touchStartY) return;
+
+  const touchEndX = event.touches[0].clientX;
+  const touchEndY = event.touches[0].clientY;
+
+  const deltaX = touchEndX - touchStartX;
+  const deltaY = touchEndY - touchStartY;
+
+
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    if (deltaX > 0 && direction !== "left") {
+      direction = "right";
+    } else if (deltaX < 0 && direction !== "right") {
+      direction = "left";
+    }
+  } else {
+    if (deltaY > 0 && direction !== "up") {
+      direction = "down";
+    } else if (deltaY < 0 && direction !== "down") {
+      direction = "up";
+    }
+  }
+  touchStartX = 0;
+  touchStartY = 0;
+}
+
 
 const drawGrid = () => {
   ctx.lineWidth = 1;
